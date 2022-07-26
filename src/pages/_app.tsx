@@ -1,10 +1,10 @@
-// src/pages/_app.tsx
 import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import { SessionProvider } from "next-auth/react";
 import "../styles/globals.scss";
+import Head from "next/head";
 
 const MyApp: AppType = ({
   Component,
@@ -12,6 +12,12 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <title>Time</title>
+        <meta name="description" content="Time – Easily Tracked" />
+        <link rel="icon" href="/favicon.png" />
+      </Head>
+
       <Component {...pageProps} />
     </SessionProvider>
   );

@@ -1,3 +1,4 @@
+import PageWrapper from "@/components/PageWrapper";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
@@ -9,7 +10,7 @@ const Home: NextPage = () => {
   ]);
 
   return (
-    <>
+    <PageWrapper>
       <Head>
         <title>Time</title>
         <meta name="description" content="Time – Easily Tracked" />
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
           <div>{data ? <p>{data.greeting}</p> : <p>Loading..</p>}</div>
         </div>
       </div>
-    </>
+    </PageWrapper>
   );
 };
 
