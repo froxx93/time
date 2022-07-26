@@ -1,4 +1,8 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
+$theme-colors: (
+  "primary": #007bff,
+);
+
+@import '~bootstrap/scss/bootstrap.scss';
 
 html,
 body {
