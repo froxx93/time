@@ -20,8 +20,14 @@ const Home: NextPage = () => {
 
   const [showForm, changeShowForm] = useState(false);
 
-  const onFormSubmit = (customer: Customer) => {
-    postCustomer.mutate(customer);
+  const onFormSubmit = async (customer: Customer) => {
+    await new Promise<void>((resolve) => {
+      postCustomer.mutate(customer, {
+        onSettled: () => {
+          resolve();
+        },
+      });
+    });
   };
 
   return (

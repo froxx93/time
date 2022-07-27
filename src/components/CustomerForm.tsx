@@ -1,24 +1,22 @@
 import { Customer } from "@/server/router/customer";
-import {
-  ChangeEvent,
-  Dispatch,
-  FormEventHandler,
-  SetStateAction,
-  useState,
-} from "react";
-import { Button, Form, FormControlProps } from "react-bootstrap";
+import { FormEventHandler, useState } from "react";
+import { Form } from "react-bootstrap";
+import LoadingButton from "./LoadingButton";
 
-const CustomerForm: React.FC<{ onSubmit: (customer: Customer) => void }> = ({
-  onSubmit,
-}) => {
+const CustomerForm: React.FC<{
+  onSubmit: (customer: Customer) => Promise<void>;
+}> = ({ onSubmit }) => {
   const [name, changeName] = useState("");
+  const [isButtonLoading, setButtonLoading] = useState(false);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
-    onSubmit({
+    setButtonLoading(true);
+    await onSubmit({
       name,
     } as Customer);
+    setButtonLoading(false);
   };
 
   return (
@@ -28,12 +26,11 @@ const CustomerForm: React.FC<{ onSubmit: (customer: Customer) => void }> = ({
         <Form.Control
           value={name}
           onChange={(event) => changeName(event.target.value)}
+          disabled={isButtonLoading}
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit">
-        Submit
-      </Button>
+      <LoadingButton isLoading={isButtonLoading}>Submit</LoadingButton>
     </Form>
   );
 };
