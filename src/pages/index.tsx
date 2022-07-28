@@ -21,11 +21,12 @@ const Home: NextPage = () => {
   const [showForm, changeShowForm] = useState(false);
 
   const onFormSubmit = async (customer: Customer) => {
-    await new Promise<void>((resolve) => {
+    await new Promise<void>((resolve, reject) => {
       postCustomer.mutate(customer, {
-        onSettled: () => {
+        onSuccess: () => {
           resolve();
         },
+        onError: reject,
       });
     });
   };
@@ -45,7 +46,6 @@ const Home: NextPage = () => {
         <div className="row">
           <div className="col-6">
             <Card className="p-3">
-              {/* <CustomerForm onSubmit={onFormSubmit} errors={errors} /> */}
               <CustomerForm onSubmit={onFormSubmit} />
             </Card>
           </div>

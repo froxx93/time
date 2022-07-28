@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { SubmitHandler, useForm } from "react-hook-form";
 import LoadingButton from "./LoadingButton";
@@ -13,16 +13,35 @@ const CustomerForm: React.FC<{
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors: clientErrors },
   } = useForm<Customer>({
     resolver: zodResolver(customerSchema),
   });
 
+  const [errors, setErrors] = useState(clientErrors);
+
   const onSubmitFull: SubmitHandler<Customer> = async (customer) => {
     setLoading(true);
-    await onSubmit(customer);
+    try {
+      await onSubmit(customer);
+    } catch (e: any) {
+      // access error data set up in createRouter() in src/server/router/context.ts
+      const {
+        shape: { data: propName, message },
+      } = e;
+      setErrors({
+        ...errors,
+        [propName]: {
+          message,
+        },
+      });
+    }
     setLoading(false);
   };
+
+  useEffect(() => {
+    setErrors(clientErrors);
+  }, [clientErrors]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmitFull)}>
@@ -44,7 +63,7 @@ const CustomerForm: React.FC<{
 
       <LoadingButton
         isLoading={isLoading}
-        disabled={!!Object.keys(errors).length}
+        disabled={!!Object.keys(clientErrors).length}
       >
         Submit
       </LoadingButton>

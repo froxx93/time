@@ -1,5 +1,5 @@
 import { createRouter } from "./context";
-import * as trpc from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { customerSchema } from "@/domains/customer";
 
 export default createRouter()
@@ -18,9 +18,10 @@ export default createRouter()
         })
         .catch((err) => {
           if (err.code === "P2002") {
-            throw new trpc.TRPCError({
+            throw new TRPCError({
               code: "CONFLICT",
               message: `There already is a customer named "${input.name}"`,
+              cause: "name",
             });
           } else {
             throw err;

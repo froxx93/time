@@ -25,4 +25,15 @@ export const createContext = async (
 
 type Context = trpc.inferAsyncReturnType<typeof createContext>;
 
-export const createRouter = () => trpc.router<Context>();
+export const createRouter = () =>
+  trpc.router<Context>().formatError(({ error, shape }) => {
+    return {
+      code: shape.code,
+      message: error.message,
+      /**
+       * this reads from TRPCError.cause (god knows why) which
+       * seems to be the only possibility to pass custom data
+       */
+      data: error.originalError as any,
+    };
+  });
