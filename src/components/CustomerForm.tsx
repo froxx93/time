@@ -1,36 +1,53 @@
-import { Customer } from "@/server/router/customer";
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
 import { Form } from "react-bootstrap";
+import { SubmitHandler, useForm } from "react-hook-form";
 import LoadingButton from "./LoadingButton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Customer, { customerSchema } from "@/domains/customer";
 
 const CustomerForm: React.FC<{
-  onSubmit: (customer: Customer) => Promise<void>;
+  onSubmit: SubmitHandler<Customer>;
 }> = ({ onSubmit }) => {
-  const [name, changeName] = useState("");
-  const [isButtonLoading, setButtonLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Customer>({
+    resolver: zodResolver(customerSchema),
+  });
 
-    setButtonLoading(true);
-    await onSubmit({
-      name,
-    } as Customer);
-    setButtonLoading(false);
+  const onSubmitFull: SubmitHandler<Customer> = async (customer) => {
+    setLoading(true);
+    await onSubmit(customer);
+    setLoading(false);
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit(onSubmitFull)}>
       <Form.Group className="mb-3">
         <Form.Label>Name</Form.Label>
         <Form.Control
-          value={name}
-          onChange={(event) => changeName(event.target.value)}
-          disabled={isButtonLoading}
+          disabled={isLoading}
+          {...register("name")}
+          isInvalid={!!errors.name}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.name && (
+            <div key={`field-error-name`} className="fieldError">
+              {errors.name.message}
+            </div>
+          )}
+        </Form.Control.Feedback>
       </Form.Group>
 
-      <LoadingButton isLoading={isButtonLoading}>Submit</LoadingButton>
+      <LoadingButton
+        isLoading={isLoading}
+        disabled={!!Object.keys(errors).length}
+      >
+        Submit
+      </LoadingButton>
     </Form>
   );
 };

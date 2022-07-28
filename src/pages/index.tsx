@@ -4,7 +4,7 @@ import { Button, Card } from "react-bootstrap";
 import { trpc } from "@/utils/trpc";
 import CustomerForm from "@/components/CustomerForm";
 import { useState } from "react";
-import { Customer } from "@/server/router/customer";
+import Customer from "@/domains/customer";
 
 const Home: NextPage = () => {
   const { data: customers, refetch } = trpc.useQuery(["customer.get-all"], {
@@ -37,6 +37,7 @@ const Home: NextPage = () => {
       <Button
         variant={showForm ? "outline-danger" : "outline-primary"}
         onClick={() => changeShowForm(!showForm)}
+        className="mb-1"
       >
         {showForm ? "Close Form" : "Add New"}
       </Button>
@@ -44,6 +45,7 @@ const Home: NextPage = () => {
         <div className="row">
           <div className="col-6">
             <Card className="p-3">
+              {/* <CustomerForm onSubmit={onFormSubmit} errors={errors} /> */}
               <CustomerForm onSubmit={onFormSubmit} />
             </Card>
           </div>
@@ -67,6 +69,6 @@ const Home: NextPage = () => {
       )}
     </PageWrapper>
   );
-};
+};;
 
 export default Home;

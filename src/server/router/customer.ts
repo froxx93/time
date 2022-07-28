@@ -1,11 +1,6 @@
 import { createRouter } from "./context";
-import { z } from "zod";
-
-const postSchema = z
-  .object({
-    name: z.string().min(2).max(100),
-  })
-  .strict();
+import * as trpc from "@trpc/server";
+import { customerSchema } from "@/domains/customer";
 
 export default createRouter()
   .query("get-all", {
@@ -15,12 +10,21 @@ export default createRouter()
   })
 
   .mutation("post", {
-    input: postSchema,
+    input: customerSchema,
     resolve({ input, ctx }) {
-      return ctx.prisma.customer.create({
-        data: input,
-      });
+      return ctx.prisma.customer
+        .create({
+          data: input,
+        })
+        .catch((err) => {
+          if (err.code === "P2002") {
+            throw new trpc.TRPCError({
+              code: "CONFLICT",
+              message: `There already is a customer named "${input.name}"`,
+            });
+          } else {
+            throw err;
+          }
+        });
     },
   });
-
-export type Customer = z.infer<typeof postSchema>;

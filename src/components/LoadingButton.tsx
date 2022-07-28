@@ -3,9 +3,10 @@ import { Button, Spinner } from "react-bootstrap";
 const LoadingButton: React.FC<{
   children: React.ReactNode;
   isLoading: boolean;
-}> = ({ children, isLoading }) => {
+  disabled: boolean;
+}> = ({ children, isLoading, disabled = false }) => {
   return (
-    <Button variant="primary" type="submit" disabled={isLoading}>
+    <Button variant="primary" type="submit" disabled={disabled || isLoading}>
       {children}{" "}
       {isLoading && (
         <Spinner
