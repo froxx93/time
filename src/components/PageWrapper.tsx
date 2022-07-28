@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Image } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
@@ -19,16 +20,18 @@ const MainNavbar = () => {
   return (
     <Navbar bg="light" expand="lg" className="border-bottom bg-white">
       <Container fluid>
-        <Navbar.Brand href="/">
-          <Image
-            alt=""
-            src="/favicon.png"
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-          />{" "}
-          Time
-        </Navbar.Brand>
+        <Link href="/" passHref>
+          <Navbar.Brand>
+            <Image
+              alt=""
+              src="/favicon.png"
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+            />{" "}
+            Time
+          </Navbar.Brand>
+        </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           {/* <Nav className="me-auto">
