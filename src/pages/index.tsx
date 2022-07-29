@@ -6,6 +6,7 @@ import CustomerForm from "@/components/CustomerForm";
 import { useState } from "react";
 import Customer from "@/domains/customer";
 import Link from "next/link";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const Home: NextPage = () => {
   const { data: customers, refetch } = trpc.useQuery(["customer.get-all"], {
@@ -14,12 +15,14 @@ const Home: NextPage = () => {
 
   const postCustomer = trpc.useMutation(["customer.post"], {
     onSuccess: () => {
-      refetch();
       changeShowForm(false);
+      refetch();
     },
   });
 
   const [showForm, changeShowForm] = useState(false);
+
+  const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
   const onFormSubmit = async (customer: Customer) => {
     await new Promise<void>((resolve, reject) => {
@@ -43,20 +46,22 @@ const Home: NextPage = () => {
       >
         {showForm ? "Close Form" : "Add New"}
       </Button>
-      {showForm && (
-        <div className="row">
-          <div className="col-6">
-            <Card className="p-3">
-              <CustomerForm onSubmit={onFormSubmit} />
-            </Card>
+      <div ref={animationParent}>
+        {showForm && (
+          <div className="row">
+            <div className="col-6">
+              <Card className="p-3">
+                <CustomerForm onSubmit={onFormSubmit} />
+              </Card>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="pb-3"></div>
 
       {customers && (
-        <div className="m-n2">
+        <div ref={animationParent} className="m-n2">
           {customers.map((customer, i) => (
             <Link
               key={i}

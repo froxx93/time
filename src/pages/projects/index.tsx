@@ -6,6 +6,7 @@ import ProjectForm from "@/components/ProjectForm";
 import { useState } from "react";
 import Project from "@/domains/project";
 import { useRouter } from "next/router";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const Projects: NextPage = () => {
   const customerId = useRouter().query.customerId as string;
@@ -23,12 +24,14 @@ const Projects: NextPage = () => {
 
   const postProject = trpc.useMutation(["project.post"], {
     onSuccess: () => {
-      refetch();
       changeShowForm(false);
+      refetch();
     },
   });
 
   const [showForm, changeShowForm] = useState(false);
+
+  const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
   const onFormSubmit = async (project: Project) => {
     await new Promise<void>((resolve, reject) => {
@@ -52,20 +55,22 @@ const Projects: NextPage = () => {
       >
         {showForm ? "Close Form" : "Add New"}
       </Button>
-      {showForm && (
-        <div className="row">
-          <div className="col-6">
-            <Card className="p-3">
-              <ProjectForm onSubmit={onFormSubmit} customerId={customerId} />
-            </Card>
+      <div ref={animationParent}>
+        {showForm && (
+          <div className="row">
+            <div className="col-6">
+              <Card className="p-3">
+                <ProjectForm onSubmit={onFormSubmit} customerId={customerId} />
+              </Card>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="pb-3"></div>
 
       {projects && (
-        <div className="m-n2">
+        <div ref={animationParent} className="m-n2">
           {projects.map((project, i) => (
             <Card
               key={i}
